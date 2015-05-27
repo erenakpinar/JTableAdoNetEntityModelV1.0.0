@@ -1,0 +1,83 @@
+﻿@{
+    ViewBag.Title = "Filtering Demo";
+}
+
+@section CssImport{
+    <style>
+        div.filtering {
+            border: 1px solid #999;
+            margin-bottom: 5px;
+            padding: 10px;
+            background-color: #EEE;
+        }
+    </style>
+}
+
+<div class="filtering">
+    <form>
+        <label>Name: <input type="text" name="productName" id="productName" /></label>
+        <label>City: @Html.DropDownList("categoryId", (IEnumerable<SelectListItem>)ViewBag.Categories, new { id = "categoryId" })</label>
+        <button type="submit" id="LoadRecordsButton">Load records</button>
+    </form>
+</div>
+
+<div id="ProductTableContainer"></div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#ProductTableContainer').jtable({
+            title: 'Product List',
+            paging: true,
+            pageSize: 10,
+            sorting: true,
+            defaultSorting: 'ProductName ASC',
+
+            actions: {
+                listAction: '@Url.Action("ProductListByFiter")',
+                deleteAction: '@Url.Action("DeleteProduct")',
+                updateAction: '@Url.Action("UpdateProduct")',
+                createAction: '@Url.Action("CreateProduct")'
+            },
+            fields: {
+
+                ProductId: {
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: true,
+                    width: '1%'
+                },
+
+
+                ProductName: {
+                    title: 'ProductName',
+                    width: '12%',
+
+                },
+                CategoryId: {
+                    title: 'CategoryId',
+                    width: '1%',
+
+                }
+
+            },
+
+        });
+
+        //Re-load records when user click 'load records' button.
+        $('#LoadRecordsButton').click(function (e) {
+            e.preventDefault();
+            $('#ProductTableContainer').jtable('load', {
+                productName: $('#productName').val(),
+                categoryId: $('#categoryId').val()
+            });
+
+        });
+
+        //Load all records when page is first shown
+        $('#LoadRecordsButton').click();
+
+    });
+
+</script>
